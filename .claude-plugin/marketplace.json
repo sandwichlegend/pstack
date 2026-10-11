@@ -1,10 +1,16 @@
 {
-  "name": "cursor-plugins",
+  "name": "sandwichlegend-pstack",
   "owner": {
-    "name": "Cursor",
-    "email": "plugins@cursor.com"
+    "name": "sandwichlegend",
+    "url": "https://github.com/sandwichlegend"
   },
+  "description": "sandwichlegend's fork of cursor/plugins. pstack for Claude Code and Codex.",
   "plugins": [
+    {
+      "name": "pstack",
+      "source": "./pstack",
+      "description": "poteto's pstack for Claude Code and Codex. Fork of cursor/plugins/pstack with a SessionStart hook that maps Cursor mechanics to the running harness."
+    },
     {
       "name": "origin-apps",
       "source": "./origin-apps",
