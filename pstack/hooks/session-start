@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+# Prints the pstack context for Claude Code and Codex SessionStart.
+# Uses only bash builtins so a thin PATH can't break it.
+set -euo pipefail
+hooks_dir=$(cd "${BASH_SOURCE[0]%/*}" && pwd)
+root=${hooks_dir%/hooks}
+ctx=$(<"$hooks_dir/session-start-context.md")
+printf '%s\n' "${ctx//@PSTACK_ROOT@/$root}"
