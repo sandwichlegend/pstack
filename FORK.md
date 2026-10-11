@@ -1,6 +1,6 @@
 # sandwichlegend/pstack
 
-A fork of [cursor/plugins](https://github.com/cursor/plugins) that runs [pstack](./pstack/README.md) in Claude Code and Codex. Lauren Tan (poteto) wrote pstack. This fork adds one hook and two plugin manifests. Every other plugin in the repo is upstream's, untouched.
+A fork of [cursor/plugins](https://github.com/cursor/plugins) that runs [pstack](./pstack/README.md) in Claude Code and Codex. Lauren Tan (poteto) wrote pstack. This fork adds a startup hook, harness reference files, and a small `team-kit-lite` plugin, plus manifests for both tools. Every other plugin in the repo is upstream's, untouched.
 
 ## Install
 
