@@ -30,7 +30,9 @@ out=$(pstack/hooks/session-start) || fail "session-start hook exited nonzero"
 [[ "$out" != *@PSTACK_ROOT@* ]] || fail "hook left @PSTACK_ROOT@ unexpanded"
 mode=$(grep -o '[^`]*/skills/poteto-mode/SKILL.md' <<<"$out" | head -1)
 [[ -f "$mode" ]] || fail "hook points at a missing file: $mode"
-for ref in $(grep -oE '^- `[a-z]+\.md`' pstack/hooks/session-start-context.md | tr -d '`- '); do
+refs=$(grep -oE '^- `[a-z]+\.md`' pstack/hooks/session-start-context.md | sed -E 's/^- `(.*)`$/\1/')
+[[ -n "$refs" ]] || fail "found no harness files named in the hook"
+for ref in $refs; do
   [[ -f "pstack/harness/$ref" ]] || fail "hook names pstack/harness/$ref, which doesn't exist"
 done
 
