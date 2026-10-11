@@ -23,6 +23,41 @@ Codex asks you to trust the hook on first run. Approve it again after any hook c
 
 To try a local checkout without installing, run `claude --plugin-dir ./pstack --plugin-dir ./team-kit-lite`.
 
+Cursor: use upstream, not this fork. pstack is written for Cursor, so it needs none of the fork's additions there.
+
+```text
+/add-plugin pstack
+/add-plugin cursor-team-kit
+```
+
+Then run `/setup-pstack` once. The fork's hook doesn't run in Cursor, so in Cursor pstack writes new skills to `.cursor/skills/` and reads only Cursor chats.
+
+Plugins install to your home folder (`~/.claude/plugins/`, `~/.codex/plugins/`), not into the repo. A repo only records which plugins to turn on.
+
+## Updating
+
+The plugin manifests leave out `version` on purpose. Without one, each git commit counts as a new version, so a push to `main` is a release. `fork/check.sh` fails if a manifest sets one.
+
+Claude Code. Turn on auto-update once per machine: run `/plugin`, open Marketplaces, pick `sandwichlegend-pstack`, and enable auto-update. Claude then updates the marketplace and its plugins at startup. To update by hand:
+
+```shell
+claude plugin marketplace update sandwichlegend-pstack
+claude plugin update pstack@sandwichlegend-pstack
+claude plugin update team-kit-lite@sandwichlegend-pstack
+```
+
+Restart Claude after an update.
+
+Codex. Update by hand:
+
+```shell
+codex plugin marketplace upgrade sandwichlegend-pstack
+codex plugin add pstack@sandwichlegend-pstack
+codex plugin add team-kit-lite@sandwichlegend-pstack
+```
+
+Codex asks you to trust the hook again if it changed.
+
 ## What the fork adds
 
 - `pstack/hooks/`. A SessionStart hook for both tools. It tells the agent where pstack lives, when to use `poteto-mode`, and which `harness/` file to read when a Cursor-specific instruction comes up.
@@ -42,7 +77,7 @@ Put fork changes in new files. Upstream never touches them, so syncs merge clean
 fork/sync-upstream.sh
 ```
 
-It fetches `cursor/plugins` and merges `upstream/main` into the current branch. Then it restores the fork's Claude marketplace, refreshes `team-kit-lite`, commits the merge, and runs `fork/check.sh`. If a conflict remains in any other file, it stops and lists it. After a sync, check that each ledger entry below still applies, and bump the fork version in both `plugin.json` files to the new upstream version.
+It fetches `cursor/plugins` and merges `upstream/main` into the current branch. Then it restores the fork's Claude marketplace, refreshes `team-kit-lite`, commits the merge, and runs `fork/check.sh`. If a conflict remains in any other file, it stops and lists it. After a sync, check that each ledger entry below still applies, then push `main`. That push is the update everyone picks up.
 
 ## Ledger of upstream files this fork edits
 
