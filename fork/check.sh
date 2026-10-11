@@ -14,13 +14,12 @@ done
 cmp -s fork/claude-marketplace.json .claude-plugin/marketplace.json ||
   fail ".claude-plugin/marketplace.json differs from fork/claude-marketplace.json. Edit the fork copy, then copy it over."
 
-version() { python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["version"])' "$1"; }
-upstream_v=$(version pstack/.cursor-plugin/plugin.json)
-claude_v=$(version pstack/.claude-plugin/plugin.json)
-codex_v=$(version pstack/.codex-plugin/plugin.json)
-[[ "$claude_v" == "$codex_v" ]] || fail "plugin versions differ: claude $claude_v, codex $codex_v"
-[[ "$claude_v" == "$upstream_v"-* ]] ||
-  echo "WARN: fork version $claude_v doesn't start with upstream $upstream_v. Bump both plugin.json files."
+for f in pstack/.claude-plugin/plugin.json pstack/.codex-plugin/plugin.json \
+  team-kit-lite/.claude-plugin/plugin.json team-kit-lite/.codex-plugin/plugin.json; do
+  python3 -c 'import json,sys; sys.exit("version" in json.load(open(sys.argv[1])))' "$f" ||
+    fail "$f sets a version. Leave it out so each git commit counts as an update."
+done
+upstream_v=$(python3 -c 'import json; print(json.load(open("pstack/.cursor-plugin/plugin.json"))["version"])')
 
 for s in $(<fork/team-kit-skills.txt); do
   diff -rq "cursor-team-kit/skills/$s" "team-kit-lite/skills/$s" >/dev/null ||
@@ -44,4 +43,4 @@ if [[ -n "${CLAUDE_BIN:-}" ]]; then
   "$CLAUDE_BIN" plugin validate pstack || fail "claude plugin validate (pstack)"
 fi
 
-echo "fork checks pass (upstream pstack $upstream_v, fork $claude_v)"
+echo "fork checks pass (upstream pstack $upstream_v, fork $(git rev-parse --short HEAD))"
