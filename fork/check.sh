@@ -11,6 +11,9 @@ for f in .claude-plugin/marketplace.json .agents/plugins/marketplace.json \
   python3 -m json.tool "$f" >/dev/null || fail "$f is not valid JSON"
 done
 
+cmp -s fork/claude-marketplace.json .claude-plugin/marketplace.json ||
+  fail ".claude-plugin/marketplace.json differs from fork/claude-marketplace.json. Edit the fork copy, then copy it over."
+
 version() { python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["version"])' "$1"; }
 upstream_v=$(version pstack/.cursor-plugin/plugin.json)
 claude_v=$(version pstack/.claude-plugin/plugin.json)

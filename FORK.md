@@ -42,13 +42,13 @@ Put fork changes in new files. Upstream never touches them, so syncs merge clean
 fork/sync-upstream.sh
 ```
 
-It fetches `cursor/plugins`, merges `upstream/main` into the current branch, refreshes `team-kit-lite`, and runs `fork/check.sh`. After a sync, check that each ledger entry below still applies, and bump the fork version in both `plugin.json` files to the new upstream version.
+It fetches `cursor/plugins` and merges `upstream/main` into the current branch. Then it restores the fork's Claude marketplace, refreshes `team-kit-lite`, commits the merge, and runs `fork/check.sh`. If a conflict remains in any other file, it stops and lists it. After a sync, check that each ledger entry below still applies, and bump the fork version in both `plugin.json` files to the new upstream version.
 
 ## Ledger of upstream files this fork edits
 
 | File | Change | Why |
 |---|---|---|
-| `.claude-plugin/marketplace.json` | Renamed the marketplace to `sandwichlegend-pstack` and added a `pstack` entry. | Claude Code only reads a marketplace from this path. The rename avoids clashing with upstream's `cursor-plugins` and with the `sandwichlegend` skills marketplace. |
+| `.claude-plugin/marketplace.json` | Replaced with `fork/claude-marketplace.json`, which lists only `pstack` and `team-kit-lite` under the name `sandwichlegend-pstack`. | Claude Code only reads a marketplace from this path. `fork/sync-upstream.sh` copies the fork version back after every merge, so upstream changes to this file never need a manual fix. Edit `fork/claude-marketplace.json`, not this file. |
 
 ## Not handled yet
 
