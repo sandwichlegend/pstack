@@ -6,7 +6,8 @@ cd "$(git rev-parse --show-toplevel)"
 fail() { echo "FAIL: $*" >&2; exit 1; }
 
 for f in .claude-plugin/marketplace.json .agents/plugins/marketplace.json \
-  pstack/.claude-plugin/plugin.json pstack/.codex-plugin/plugin.json pstack/hooks/hooks.json; do
+  pstack/.claude-plugin/plugin.json pstack/.codex-plugin/plugin.json pstack/hooks/hooks.json \
+  team-kit-lite/.claude-plugin/plugin.json team-kit-lite/.codex-plugin/plugin.json; do
   python3 -m json.tool "$f" >/dev/null || fail "$f is not valid JSON"
 done
 
@@ -18,10 +19,20 @@ codex_v=$(version pstack/.codex-plugin/plugin.json)
 [[ "$claude_v" == "$upstream_v"-* ]] ||
   echo "WARN: fork version $claude_v doesn't start with upstream $upstream_v. Bump both plugin.json files."
 
+for s in $(<fork/team-kit-skills.txt); do
+  diff -rq "cursor-team-kit/skills/$s" "team-kit-lite/skills/$s" >/dev/null ||
+    fail "team-kit-lite/skills/$s differs from upstream. Run fork/vendor-team-kit.sh"
+done
+extra=$(comm -13 <(sort fork/team-kit-skills.txt) <(ls team-kit-lite/skills | sort))
+[[ -z "$extra" ]] || fail "team-kit-lite has skills not in fork/team-kit-skills.txt: $extra"
+
 out=$(pstack/hooks/session-start) || fail "session-start hook exited nonzero"
 [[ "$out" != *@PSTACK_ROOT@* ]] || fail "hook left @PSTACK_ROOT@ unexpanded"
 mode=$(grep -o '[^`]*/skills/poteto-mode/SKILL.md' <<<"$out" | head -1)
 [[ -f "$mode" ]] || fail "hook points at a missing file: $mode"
+for ref in $(grep -oE '^- `[a-z]+\.md`' pstack/hooks/session-start-context.md | tr -d '`- '); do
+  [[ -f "pstack/harness/$ref" ]] || fail "hook names pstack/harness/$ref, which doesn't exist"
+done
 
 if [[ -n "${CLAUDE_BIN:-}" ]]; then
   "$CLAUDE_BIN" plugin validate . || fail "claude plugin validate (marketplace)"

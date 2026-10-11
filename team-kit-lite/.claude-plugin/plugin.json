@@ -1,0 +1,8 @@
+{
+  "name": "team-kit-lite",
+  "version": "1.2.0-sl.1",
+  "description": "The three cursor-team-kit skills pstack calls: deslop, control-ui, control-cli. Linked from upstream, not copied.",
+  "author": { "name": "Eric Zakariasson" },
+  "homepage": "https://github.com/sandwichlegend/pstack",
+  "license": "MIT"
+}

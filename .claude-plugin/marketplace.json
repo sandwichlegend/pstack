@@ -12,6 +12,11 @@
       "description": "poteto's pstack for Claude Code and Codex. Fork of cursor/plugins/pstack with a SessionStart hook that maps Cursor mechanics to the running harness."
     },
     {
+      "name": "team-kit-lite",
+      "source": "./team-kit-lite",
+      "description": "The three cursor-team-kit skills pstack calls: deslop, control-ui, control-cli."
+    },
+    {
       "name": "origin-apps",
       "source": "./origin-apps",
       "description": "Skills for building on the Cursor Origin API. Fetch the live spec first, then follow the Origin rules for credentials, scopes, webhooks, paging, and errors. Includes a skill that plans the port of an existing GitHub App."

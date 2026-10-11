@@ -8,6 +8,7 @@ Claude Code:
 
 ```text
 /plugin install pstack --marketplace sandwichlegend/pstack
+/plugin install team-kit-lite@sandwichlegend-pstack
 ```
 
 Codex:
@@ -15,15 +16,18 @@ Codex:
 ```shell
 codex plugin marketplace add sandwichlegend/pstack
 codex plugin add pstack@sandwichlegend-pstack
+codex plugin add team-kit-lite@sandwichlegend-pstack
 ```
 
 Codex asks you to trust the hook on first run. Approve it again after any hook change.
 
-To try a local checkout without installing, run `claude --plugin-dir ./pstack`.
+To try a local checkout without installing, run `claude --plugin-dir ./pstack --plugin-dir ./team-kit-lite`.
 
 ## What the fork adds
 
-- `pstack/hooks/`. A SessionStart hook for both tools. It tells the agent where pstack lives, when to use `poteto-mode`, and how to translate pstack's Cursor tool names to the harness it's running in.
+- `pstack/hooks/`. A SessionStart hook for both tools. It tells the agent where pstack lives, when to use `poteto-mode`, and which `harness/` file to read when a Cursor-specific instruction comes up.
+- `pstack/harness/`. How to translate pstack's Cursor mechanics: tools, models, chat history, and where new skills go. The agent reads these only when needed.
+- `team-kit-lite/`. The three `cursor-team-kit` skills pstack calls: `deslop`, `control-ui`, and `control-cli`. They're real copies, because Codex drops symlinks on install. `fork/vendor-team-kit.sh` refreshes them from upstream, and `fork/check.sh` fails if they drift.
 - `pstack/.claude-plugin/plugin.json` and `pstack/.codex-plugin/plugin.json`. Plugin manifests for each tool.
 - `.agents/plugins/marketplace.json`. The Codex marketplace.
 - `fork/`. Sync and check scripts.
@@ -38,7 +42,7 @@ Put fork changes in new files. Upstream never touches them, so syncs merge clean
 fork/sync-upstream.sh
 ```
 
-It fetches `cursor/plugins`, merges `upstream/main` into the current branch, and runs `fork/check.sh`. After a sync, check that each ledger entry below still applies, and bump the fork version in both `plugin.json` files to the new upstream version.
+It fetches `cursor/plugins`, merges `upstream/main` into the current branch, refreshes `team-kit-lite`, and runs `fork/check.sh`. After a sync, check that each ledger entry below still applies, and bump the fork version in both `plugin.json` files to the new upstream version.
 
 ## Ledger of upstream files this fork edits
 

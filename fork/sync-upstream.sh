@@ -16,4 +16,5 @@ if [[ -n "$both" ]]; then
 fi
 
 git merge --no-edit upstream/main
+fork/vendor-team-kit.sh
 fork/check.sh
