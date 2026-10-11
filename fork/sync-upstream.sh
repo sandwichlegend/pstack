@@ -5,6 +5,11 @@
 set -euo pipefail
 cd "$(git rev-parse --show-toplevel)"
 
+[[ -z "$(git status --porcelain)" ]] || {
+  echo "Working tree isn't clean. Commit or stash your changes, then sync." >&2
+  exit 1
+}
+
 ref=${1:-upstream/main}
 if [[ $# -eq 0 ]]; then
   git remote get-url upstream >/dev/null 2>&1 ||
@@ -21,7 +26,12 @@ if [[ -n "$both" ]]; then
   sed 's/^/  /' <<<"$both"
 fi
 
-git merge --no-edit --no-commit "$ref" || true
+if ! git merge --no-ff --no-edit --no-commit "$ref"; then
+  git rev-parse -q --verify MERGE_HEAD >/dev/null || {
+    echo "git merge failed before merging anything. Nothing was changed." >&2
+    exit 1
+  }
+fi
 
 cp fork/claude-marketplace.json "$owned"
 fork/vendor-team-kit.sh
@@ -36,5 +46,7 @@ fi
 
 if git rev-parse -q --verify MERGE_HEAD >/dev/null; then
   git commit --no-edit
+elif ! git diff --cached --quiet; then
+  git commit -m "Restore the fork marketplace and team-kit-lite copies"
 fi
 fork/check.sh
