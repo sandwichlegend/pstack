@@ -6,7 +6,7 @@ cd "$(git rev-parse --show-toplevel)"
 fail() { echo "FAIL: $*" >&2; exit 1; }
 
 for f in .claude-plugin/marketplace.json .agents/plugins/marketplace.json \
-  pstack/.claude-plugin/plugin.json pstack/.codex-plugin/plugin.json pstack/hooks/hooks.json \
+  pstack/.claude-plugin/plugin.json pstack/hooks/hooks.json \
   team-kit-lite/.claude-plugin/plugin.json team-kit-lite/.codex-plugin/plugin.json; do
   python3 -m json.tool "$f" >/dev/null || fail "$f is not valid JSON"
 done
@@ -14,7 +14,7 @@ done
 cmp -s fork/claude-marketplace.json .claude-plugin/marketplace.json ||
   fail ".claude-plugin/marketplace.json differs from fork/claude-marketplace.json. Edit the fork copy, then copy it over."
 
-for f in pstack/.claude-plugin/plugin.json pstack/.codex-plugin/plugin.json \
+for f in pstack/.claude-plugin/plugin.json \
   team-kit-lite/.claude-plugin/plugin.json team-kit-lite/.codex-plugin/plugin.json; do
   python3 -c 'import json,sys; sys.exit("version" in json.load(open(sys.argv[1])))' "$f" ||
     fail "$f sets a version. Leave it out so each git commit counts as an update."

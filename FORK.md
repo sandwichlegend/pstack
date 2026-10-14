@@ -36,7 +36,7 @@ Plugins install to your home folder (`~/.claude/plugins/`, `~/.codex/plugins/`),
 
 ## Updating
 
-The plugin manifests leave out `version` on purpose. Without one, each git commit counts as a new version, so a push to `main` is a release. `fork/check.sh` fails if a manifest sets one.
+The fork's plugin manifests leave out `version` on purpose. Without one, Claude Code treats each git commit as a new version, so a push to `main` is a release. `fork/check.sh` fails if a fork manifest sets one. Codex reads upstream's root `pstack/plugin.json` and shows upstream's version, but re-adding the plugin still pulls in fork changes at the same version.
 
 Claude Code. Turn on auto-update once per machine: run `/plugin`, open Marketplaces, pick `sandwichlegend-pstack`, and enable auto-update. Claude then updates the marketplace and its plugins at startup. To update by hand:
 
@@ -63,7 +63,7 @@ Codex asks you to trust the hook again if it changed.
 - `pstack/hooks/`. A SessionStart hook for both tools. It tells the agent where pstack lives, when to use `poteto-mode`, and which `harness/` file to read when a Cursor-specific instruction comes up.
 - `pstack/harness/`. How to translate pstack's Cursor mechanics: tools, models, chat history, and where new skills go. The agent reads these only when needed.
 - `team-kit-lite/`. The three `cursor-team-kit` skills pstack calls: `deslop`, `control-ui`, and `control-cli`. They're real copies, because Codex drops symlinks on install. `fork/vendor-team-kit.sh` refreshes them from upstream, and `fork/check.sh` fails if they drift.
-- `pstack/.claude-plugin/plugin.json` and `pstack/.codex-plugin/plugin.json`. Plugin manifests for each tool.
+- `pstack/.claude-plugin/plugin.json`. The Claude Code manifest. Codex reads upstream's root `pstack/plugin.json`, so pstack needs no Codex manifest of its own.
 - `.agents/plugins/marketplace.json`. The Codex marketplace.
 - `fork/`. Sync and check scripts.
 
